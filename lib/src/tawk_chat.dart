@@ -4,8 +4,23 @@ import 'package:flutter/material.dart';
 import 'tawk_chat_stub.dart' if (dart.library.html) 'tawk_chat_web.dart';
 import 'package:webview_flutter/webview_flutter.dart' as wv;
 
-/// Facade widget that uses a web-optimized DOM embed on Flutter Web, and a
-/// WebView on other platforms.
+/// A widget that embeds the tawk.to chat widget into your Flutter app.
+///
+/// On web platforms this widget injects the tawk.to script into the host
+/// page's DOM. On non-web platforms it uses a [WebView] to load the same
+/// script inside a minimal HTML page.
+///
+/// Required:
+/// - [propertyId]: the tawk.to property id for your chat.
+///
+/// Optional:
+/// - [initialHeight]: a fixed height for the widget. If omitted the widget
+///   expands to fill its parent.
+///
+/// Example:
+/// ```dart
+/// TawkChat(propertyId: 'YOUR_PROPERTY_ID')
+/// ```
 class TawkChat extends StatelessWidget {
   final String propertyId;
   final double? initialHeight;
