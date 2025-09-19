@@ -7,6 +7,8 @@
 
 import 'tawk_platform_interface.dart';
 
+export 'src/tawk_chat.dart' show TawkChat;
+
 class Tawk {
   Future<String?> getPlatformVersion() {
     return TawkPlatform.instance.getPlatformVersion();

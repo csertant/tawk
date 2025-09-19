@@ -1,6 +1,6 @@
 name: tawk
-description: "A new Flutter plugin project."
-version: 0.0.1
+description: "Flutter plugin providing tawk.to chat as a webview"
+version: 0.1.0
 homepage:
 
 environment:
@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
+  # Official, well-maintained webview plugin that supports Android, iOS and web
+  webview_flutter: ^4.0.7
 
 dev_dependencies:
   flutter_test:
