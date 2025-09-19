@@ -43,7 +43,8 @@ class HomePage extends StatelessWidget {
 class ChatPage extends StatelessWidget {
   // Replace this with your real tawk chat URL when testing, e.g.
   // https://tawk.to/chat/<property>/<widgetId>
-  static const _exampleChatUrl = 'YOUR_CHAT_URL_HERE';
+  static const _exampleChatUrl =
+      'https://tawk.to/chat/68cd0026a6f19a1922e79939/1j5gch5k0';
 
   const ChatPage({super.key});
 

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'tawk_chat_stub.dart' if (dart.library.html) 'tawk_chat_web.dart';
+import 'tawk_chat_common.dart';
 import 'package:webview_flutter/webview_flutter.dart' as wv;
 
 /// A widget that embeds the tawk.to chat widget into your Flutter app.
@@ -63,19 +64,7 @@ class _TawkChatMobileState extends State<_TawkChatMobile> {
     _loadTawkHtml();
   }
 
-  String _buildTawkHtmlFromUrl(String chatUrl) =>
-      '''
-<!doctype html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>html,body{height:100%;margin:0;padding:0;}#tawk-iframe{height:100%;width:100%;border:0;}</style>
-  </head>
-  <body>
-    <iframe id="tawk-iframe" src="$chatUrl" frameborder="0" allow="clipboard-write; encrypted-media; fullscreen; geolocation;"></iframe>
-  </body>
-</html>
-''';
+  String _buildTawkHtmlFromUrl(String chatUrl) => buildTawkEmbedHtml(chatUrl);
 
   Future<void> _loadTawkHtml() async {
     await _controller.loadHtmlString(_buildTawkHtmlFromUrl(widget.chatUrl));

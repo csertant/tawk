@@ -1,6 +1,7 @@
 // Use dart:js_interop static interop for DOM access (modern recommended API).
 import 'dart:js_interop';
 import 'package:flutter/material.dart';
+import 'tawk_chat_common.dart';
 
 @JS()
 @staticInterop
@@ -72,11 +73,47 @@ class _TawkChatWebState extends State<TawkChatWeb> {
     div.id = id;
     doc.body!.appendChild(div);
 
-    // Create an iframe pointing directly to the provided chatUrl.
-    final iframe = doc.createElement('iframe');
-    iframe.setAttribute('src', widget.chatUrl);
-    iframe.setAttribute('style', 'width:100%;height:100%;border:0;');
-    div.appendChild(iframe);
+    // Inject the official tawk.to embed script instead of using an iframe.
+    // The expected chatUrl is like: https://tawk.to/chat/<property>/<widgetId>
+    // We convert it to the script src: https://embed.tawk.to/<property>/<widgetId>
+    final propertyId = getPropertyId(widget.chatUrl);
+    final widgetId = getWidgetId(widget.chatUrl);
+
+    // Create a container div that the widget script can use (optional) and append it.
+    final container = doc.createElement('div');
+    container.id = '$id-container';
+    div.appendChild(container);
+
+    // If we couldn't parse property/widget ids, fall back to embedding the chatUrl in an iframe.
+    if (propertyId == null || widgetId == null) {
+      final iframe = doc.createElement('iframe');
+      iframe.setAttribute('src', widget.chatUrl);
+      iframe.setAttribute('style', 'width:100%;height:100%;border:0;');
+      div.appendChild(iframe);
+      return;
+    }
+
+    // Use the same HTML builder as the WebView implementation and inject its script.
+    final loader = doc.createElement('script');
+    loader.setAttribute('src', 'https://embed.tawk.to/$propertyId/$widgetId');
+    loader.setAttribute('async', 'true');
+    loader.setAttribute('type', 'text/javascript');
+    loader.setAttribute('crossorigin', '*');
+
+    // Also inject an inline initializer to set Tawk_API and Tawk_LoadStart.
+    final init = doc.createElement('script');
+    init.setAttribute('type', 'text/javascript');
+    try {
+      init.setAttribute(
+        'text',
+        "var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();",
+      );
+    } catch (_) {
+      // ignore if not supported; loader will still load the widget
+    }
+
+    div.appendChild(init);
+    div.appendChild(loader);
   }
 
   @override
