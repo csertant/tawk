@@ -1,16 +1,25 @@
 # tawk_example
 
-Demonstrates how to use the tawk plugin.
+Demonstrates how to use the `tawk` plugin and the `TawkChat` widget.
 
-## Getting Started
+## Usage
 
-This project is a starting point for a Flutter application.
+1. Open `example/lib/main.dart` and replace `YOUR_PROPERTY_ID_HERE` with your actual tawk.to property id.
+2. Run the example for your target platform:
 
-A few resources to get you started if this is your first Flutter project:
+Flutter web:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+flutter run -d chrome
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Android/iOS:
+
+```bash
+flutter run
+```
+
+Notes
+
+- On web this example injects the tawk.to script into the host page. For inline rendering and better layout control, consider implementing an HtmlElementView-backed embed.
+- On mobile platforms the plugin uses a WebView to host the tawk.to embed.
