@@ -5,8 +5,18 @@
 
 export 'src/tawk_chat_web.dart' show TawkChatWeb;
 
-/// Dummy class referenced as pluginClass in pubspec.yaml. If you later
-/// want to perform plugin registration for web, implement registration here.
+// Provide a minimal registerWith to satisfy the generated web plugin
+// registrant which will call `TawkWeb.registerWith(registrar)`.
+// Import is deferred here to avoid adding a hard dependency on
+// flutter_web_plugins when not compiling for web.
+// The signature must match: static void registerWith(Registrar registrar)
+// but we keep the body empty because the widget is used directly by apps.
 class TawkWeb {
   const TawkWeb();
+
+  static void registerWith(Object registrar) {
+    // No-op registration hook. Provided to satisfy generated registrant.
+    // If in the future the plugin needs platform-level registration on web,
+    // implement it here using the flutter_web_plugins Registrar API.
+  }
 }

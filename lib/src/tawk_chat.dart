@@ -11,7 +11,7 @@ import 'package:webview_flutter/webview_flutter.dart' as wv;
 /// script inside a minimal HTML page.
 ///
 /// Required:
-/// - [propertyId]: the tawk.to property id for your chat.
+/// - [chatUrl]: the tawk.to chat URL for your chat.
 ///
 /// Optional:
 /// - [initialHeight]: a fixed height for the widget. If omitted the widget
@@ -19,32 +19,32 @@ import 'package:webview_flutter/webview_flutter.dart' as wv;
 ///
 /// Example:
 /// ```dart
-/// TawkChat(propertyId: 'YOUR_PROPERTY_ID')
+/// TawkChat(chatUrl: 'https://tawk.to/chat/<id>/<widget>')
 /// ```
 class TawkChat extends StatelessWidget {
-  final String propertyId;
+  /// The full tawk chat URL to open (e.g. https://tawk.to/chat/&lt;id&gt;/&lt;widget&gt;).
+  ///
+  /// This package requires a direct chat URL. Provide a valid URL string.
+  final String chatUrl;
   final double? initialHeight;
 
-  const TawkChat({super.key, required this.propertyId, this.initialHeight});
+  const TawkChat({super.key, required this.chatUrl, this.initialHeight});
 
   @override
   Widget build(BuildContext context) {
     if (kIsWeb) {
-      return TawkChatWeb(propertyId: propertyId, initialHeight: initialHeight);
+      return TawkChatWeb(chatUrl: chatUrl, initialHeight: initialHeight);
     }
     // Use a WebView-based implementation for non-web platforms.
-    return _TawkChatMobile(
-      propertyId: propertyId,
-      initialHeight: initialHeight,
-    );
+    return _TawkChatMobile(chatUrl: chatUrl, initialHeight: initialHeight);
   }
 }
 
 class _TawkChatMobile extends StatefulWidget {
-  final String propertyId;
+  final String chatUrl;
   final double? initialHeight;
 
-  const _TawkChatMobile({required this.propertyId, this.initialHeight});
+  const _TawkChatMobile({required this.chatUrl, this.initialHeight});
 
   @override
   State<_TawkChatMobile> createState() => _TawkChatMobileState();
@@ -63,34 +63,22 @@ class _TawkChatMobileState extends State<_TawkChatMobile> {
     _loadTawkHtml();
   }
 
-  String _buildTawkHtml(String propertyId) =>
+  String _buildTawkHtmlFromUrl(String chatUrl) =>
       '''
 <!doctype html>
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>html,body{height:100%;margin:0;padding:0;}#tawk-container{height:100%;}</style>
+    <style>html,body{height:100%;margin:0;padding:0;}#tawk-iframe{height:100%;width:100%;border:0;}</style>
   </head>
   <body>
-    <div id="tawk-container"></div>
-    <script type="text/javascript">
-      var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-      (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/' + '$propertyId' + '/default';
-    s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-      })();
-    </script>
+    <iframe id="tawk-iframe" src="$chatUrl" frameborder="0" allow="clipboard-write; encrypted-media; fullscreen; geolocation;"></iframe>
   </body>
 </html>
 ''';
 
   Future<void> _loadTawkHtml() async {
-    final html = _buildTawkHtml(widget.propertyId);
-    await _controller.loadHtmlString(html);
+    await _controller.loadHtmlString(_buildTawkHtmlFromUrl(widget.chatUrl));
   }
 
   @override

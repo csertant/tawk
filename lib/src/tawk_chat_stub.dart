@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 /// DOM-based TawkChat is not available. This ensures conditional imports
 /// compile across platforms.
 class TawkChatWeb extends StatelessWidget {
-  final String propertyId;
+  final String chatUrl;
   final double? initialHeight;
 
-  const TawkChatWeb({super.key, required this.propertyId, this.initialHeight});
+  const TawkChatWeb({super.key, required this.chatUrl, this.initialHeight});
 
   @override
   Widget build(BuildContext context) {

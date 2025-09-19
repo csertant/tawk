@@ -13,23 +13,23 @@ import 'package:flutter/material.dart';
 import 'package:tawk/tawk.dart';
 
 class MyChatPage extends StatelessWidget {
-	@override
-	Widget build(BuildContext context) {
-		return Scaffold(
-			appBar: AppBar(title: const Text('Support')),
-			body: const TawkChat(propertyId: 'YOUR_PROPERTY_ID_HERE'),
-		);
-	}
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Support')),
+      body: const TawkChat(chatUrl: 'YOUR_CHAT_URL_HERE'),
+    );
+  }
 }
 ```
 
-See `example/lib/main.dart` for a working example that demonstrates how to provide your tawk property id.
+See `example/lib/main.dart` for a working example that demonstrates how to provide your tawk chat URL.
 
 ## Installation
 
 Add the package to your `pubspec.yaml` (or run `flutter pub add tawk`).
 
-On web the plugin injects the tawk.to script into the page. On other platforms it uses a WebView to host the tawk widget.
+On web and mobile the plugin opens the tawk chat URL in an iframe/webview. Provide a full chat URL (e.g. https://tawk.to/chat/<id>/<widget>).
 
 ## Usage
 
@@ -44,7 +44,7 @@ class MyChatPage extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return Scaffold(
 			appBar: AppBar(title: const Text('Support')),
-			body: const TawkChat(propertyId: 'YOUR_PROPERTY_ID_HERE'),
+			body: const TawkChat(chatUrl: 'YOUR_CHAT_URL_ID_HERE'),
 		);
 	}
 }
@@ -55,4 +55,4 @@ Notes on platforms:
 - Mobile/Desktop: uses a WebView to load the tawk script in an isolated HTML page. JavaScript is enabled.
 
 Privacy / Legal:
-This package includes an integration with the third-party tawk.to service. You must provide your own property id and ensure you comply with tawk.to's terms and applicable privacy laws (GDPR, CCPA, etc.).
+This package includes an integration with the third-party tawk.to service. You must provide your own chat URL and ensure you comply with tawk.to's terms and applicable privacy laws (GDPR, CCPA, etc.).

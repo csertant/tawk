@@ -1,5 +1,5 @@
 name: tawk
-description: "A small Flutter plugin that embeds tawk.to chat in your app. Supports web (DOM injection) and mobile/desktop via WebView. Provide your tawk property id to show the chat widget."
+description: "A small Flutter plugin that embeds tawk.to chat in your app. Supports web (DOM injection) and mobile/desktop via WebView."
 version: 0.1.0
 homepage: https://github.com/csertant/tawk
 documentation: https://github.com/csertant/tawk#readme
@@ -37,4 +37,4 @@ flutter:
         pluginClass: TawkPlugin
       web:
         pluginClass: TawkWeb
-        fileName: lib/tawk_web.dart
+        fileName: tawk_web.dart

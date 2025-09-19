@@ -32,10 +32,10 @@ extension ElementExtensions on Element {
 external Document? get _document;
 
 class TawkChatWeb extends StatefulWidget {
-  final String propertyId;
+  final String chatUrl;
   final double? initialHeight;
 
-  const TawkChatWeb({super.key, required this.propertyId, this.initialHeight});
+  const TawkChatWeb({super.key, required this.chatUrl, this.initialHeight});
 
   @override
   State<TawkChatWeb> createState() => _TawkChatWebState();
@@ -62,7 +62,7 @@ class _TawkChatWebState extends State<TawkChatWeb> {
   }
 
   void _attachTawk() {
-    final id = 'flutter-tawk-${widget.propertyId}';
+    final id = 'flutter-tawk-${widget.chatUrl.hashCode}';
     _containerId = id;
 
     final existing = doc.getElementById(id);
@@ -72,13 +72,11 @@ class _TawkChatWebState extends State<TawkChatWeb> {
     div.id = id;
     doc.body!.appendChild(div);
 
-    final script = doc.createElement('script');
-    script.type = 'text/javascript';
-    script.async = true;
-    script.src = 'https://embed.tawk.to/${widget.propertyId}/default';
-    script.setAttribute('crossorigin', '*');
-
-    doc.head!.appendChild(script);
+    // Create an iframe pointing directly to the provided chatUrl.
+    final iframe = doc.createElement('iframe');
+    iframe.setAttribute('src', widget.chatUrl);
+    iframe.setAttribute('style', 'width:100%;height:100%;border:0;');
+    div.appendChild(iframe);
   }
 
   @override

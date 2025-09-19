@@ -41,8 +41,9 @@ class HomePage extends StatelessWidget {
 }
 
 class ChatPage extends StatelessWidget {
-  // Replace this with your real tawk property id when testing.
-  static const _examplePropertyId = 'YOUR_PROPERTY_ID_HERE';
+  // Replace this with your real tawk chat URL when testing, e.g.
+  // https://tawk.to/chat/<property>/<widgetId>
+  static const _exampleChatUrl = 'YOUR_CHAT_URL_HERE';
 
   const ChatPage({super.key});
 
@@ -50,7 +51,7 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Tawk Chat')),
-      body: TawkChat(propertyId: _examplePropertyId),
+      body: TawkChat(chatUrl: _exampleChatUrl),
     );
   }
 }
