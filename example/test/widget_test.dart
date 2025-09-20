@@ -8,11 +8,15 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:tawk_example/main.dart';
+import 'package:tawk/tawk.dart';
 
 void main() {
   testWidgets('Open Tawk Chat button present', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const ExampleApp());
+    final controller = TawkController(
+      chatUrl: 'https://tawk.to/chat/<id>/<widget>',
+    );
+    await tester.pumpWidget(ExampleApp(tawkController: controller));
 
     // Verify that the button to open the chat exists.
     expect(find.text('Open Tawk Chat'), findsOneWidget);

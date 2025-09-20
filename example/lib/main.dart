@@ -2,18 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:tawk/tawk.dart';
 
 void main() {
-  runApp(const ExampleApp());
+  // Create a single controller and pass it into the app so it's available
+  // globally and the TawkChat widget doesn't need a duplicate chatUrl.
+  final tawkController = TawkController(
+    chatUrl: 'https://tawk.to/chat/<id>/<widget>',
+  );
+  runApp(ExampleApp(tawkController: tawkController));
 }
 
 class ExampleApp extends StatelessWidget {
-  const ExampleApp({super.key});
+  final TawkController tawkController;
+  const ExampleApp({required this.tawkController, super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tawk Example',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomePage(),
+      // Inject the TawkChat via the builder so it wraps the Navigator and
+      // all routes. This ensures TawkController.of(context) works anywhere.
+      builder: (context, child) {
+        // Place TawkChat above the navigator by passing the navigator `child`
+        // as TawkChat's child. This makes TawkChat an ancestor of all routes
+        // and allows `TawkController.of(context)` to find the controller.
+        return TawkChat(
+          controller: tawkController,
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+      home: HomePage(),
     );
   }
 }
@@ -23,16 +40,13 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = TawkController.of(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Tawk Example')),
       body: Center(
         child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ChatPage()),
-            );
-          },
+          onPressed: () => controller.open(context),
           child: const Text('Open Tawk Chat'),
         ),
       ),
@@ -40,19 +54,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class ChatPage extends StatelessWidget {
-  // Replace this with your real tawk chat URL when testing, e.g.
-  // https://tawk.to/chat/<property>/<widgetId>
-  static const _exampleChatUrl =
-      'https://tawk.to/chat/68cd0026a6f19a1922e79939/1j5gch5k0';
-
-  const ChatPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Tawk Chat')),
-      body: TawkChat(chatUrl: _exampleChatUrl),
-    );
-  }
-}
+// Alternate minimal usage: you can also pass just a chatUrl and let the
+// widget create its own controller internally:
+// TawkChat(chatUrl: 'https://tawk.to/chat/<id>/<widget>')
