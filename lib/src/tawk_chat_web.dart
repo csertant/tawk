@@ -5,6 +5,10 @@ import 'tawk_chat_common.dart';
 
 @JS()
 @staticInterop
+/// JavaScript `document` interop facade used by the web implementation.
+///
+/// This class is a lightweight static interop wrapper that exposes the DOM
+/// `document` interface used to append the tawk embed script.
 class Document {}
 
 extension DocumentExtensions on Document {
@@ -16,6 +20,10 @@ extension DocumentExtensions on Document {
 
 @JS()
 @staticInterop
+/// JavaScript `Element` interop facade used to manipulate DOM nodes.
+///
+/// The extension methods on [Element] provide the subset of DOM
+/// operations required by this package (appendChild, setAttribute, etc.).
 class Element {}
 
 extension ElementExtensions on Element {
@@ -32,8 +40,19 @@ extension ElementExtensions on Element {
 @JS('document')
 external Document? get _document;
 
+/// Web-only widget that attaches the official tawk.to embed script to the
+/// host HTML page and provides a placeholder widget in the Flutter tree.
+///
+/// This widget is intended to be placed near the app root so it can
+/// install the tawk script once for the host page. On web it injects the
+/// script into `document.body`. On non-web platforms this class is not
+/// used (see the platform conditional imports).
 class TawkChatWeb extends StatefulWidget {
+  /// The full tawk chat URL (e.g. `https://tawk.to/chat/<property>/<widget>`).
   final String chatUrl;
+
+  /// Optional initial height to reserve in the Flutter layout for the
+  /// chat placeholder. If null the widget expands to the available space.
   final double? initialHeight;
 
   const TawkChatWeb({super.key, required this.chatUrl, this.initialHeight});

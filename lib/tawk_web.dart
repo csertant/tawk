@@ -5,15 +5,20 @@
 
 export 'src/tawk_chat_web.dart' show TawkChatWeb;
 
-// Provide a minimal registerWith to satisfy the generated web plugin
-// registrant which will call `TawkWeb.registerWith(registrar)`.
-// Import is deferred here to avoid adding a hard dependency on
-// flutter_web_plugins when not compiling for web.
-// The signature must match: static void registerWith(Registrar registrar)
-// but we keep the body empty because the widget is used directly by apps.
+/// Minimal web entry file for the plugin.
+///
+/// This provides a `registerWith` hook to satisfy the generated web
+/// plugin registrant. The current implementation is a no-op because the
+/// web behavior is implemented by the `TawkChatWeb` widget which apps can
+/// use directly.
 class TawkWeb {
   const TawkWeb();
 
+  /// Registration hook invoked by generated plugin registrant code.
+  ///
+  /// The `registrar` parameter is intentionally typed as `Object` to avoid
+  /// importing flutter_web_plugins in this file. Implement it if platform
+  /// registration is later required.
   static void registerWith(Object registrar) {
     // No-op registration hook. Provided to satisfy generated registrant.
     // If in the future the plugin needs platform-level registration on web,

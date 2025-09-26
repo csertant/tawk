@@ -31,11 +31,19 @@ jobs:
         run: flutter gen-l10n
 
       - name: Flutter lint
-        # TODO The last two options should be removed as soon as possible
         run: flutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
 
       - name: Flutter format
         run: dart format --set-exit-if-changed .
 
-      #- name: Run tests
-      #  run: flutter test --coverage
+      - name: Generate docs
+        run: dart doc --output doc/api
+
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: doc/api
+
+      - name: Run tests
+        run: flutter test --coverage

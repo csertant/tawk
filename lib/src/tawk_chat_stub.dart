@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 /// Stub implementation used on non-web platforms when the web-specific
-/// DOM-based TawkChat is not available. This ensures conditional imports
-/// compile across platforms.
+/// DOM-based `TawkChatWeb` is not available. This keeps the conditional
+/// import compile-time correct while providing a no-op placeholder.
 class TawkChatWeb extends StatelessWidget {
+  /// The full tawk chat URL. Present for API parity with the web widget.
   final String chatUrl;
+
+  /// Optional height reserved for the placeholder.
   final double? initialHeight;
 
   const TawkChatWeb({super.key, required this.chatUrl, this.initialHeight});

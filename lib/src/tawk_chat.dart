@@ -55,7 +55,8 @@ class TawkController {
 // Controller provider removed: TawkChat now exposes its controller via its State.
 
 /// Public widget that owns (or accepts) a [TawkController] and exposes it
-/// via [TawkChatControllerProvider]. On web it installs the embed script.
+/// to descendant widgets via `TawkController.of(context)`. On web it
+/// installs the embed script.
 class TawkChat extends StatefulWidget {
   /// The chat URL (e.g. https://tawk.to/chat/&lt;id&gt;/&lt;widget&gt;). Optional if
   /// a [TawkController] with a chatUrl is provided.

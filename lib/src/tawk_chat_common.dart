@@ -1,4 +1,10 @@
 // Shared helpers for building tawk embed script URLs and HTML.
+
+/// Extracts the property id portion from a full Tawk chat URL.
+///
+/// For example, given `https://tawk.to/chat/<property>/<widget>` this
+/// returns the `<property>` segment. Returns `null` if the URL cannot be
+/// parsed.
 String? getPropertyId(String chatUrl) {
   try {
     final parts = chatUrl.split('/').where((p) => p.isNotEmpty).toList();
@@ -7,6 +13,11 @@ String? getPropertyId(String chatUrl) {
   return null;
 }
 
+/// Extracts the widget id portion from a full Tawk chat URL.
+///
+/// For example, given `https://tawk.to/chat/<property>/<widget>` this
+/// returns the `<widget>` segment. Returns `null` if the URL cannot be
+/// parsed.
 String? getWidgetId(String chatUrl) {
   try {
     final parts = chatUrl.split('/').where((p) => p.isNotEmpty).toList();
@@ -15,8 +26,12 @@ String? getWidgetId(String chatUrl) {
   return null;
 }
 
-/// Build a minimal HTML string that initialises the tawk API and loads
-/// the embed script. This is used by WebView-based platforms.
+/// Build a minimal HTML string that initializes the tawk API and loads
+/// the embed script. This HTML is used by WebView-based platforms.
+///
+/// If the provided `chatUrl` cannot be parsed into a property/widget
+/// pair the returned HTML contains an iframe pointing to the original
+/// `chatUrl` as a fallback.
 String buildTawkEmbedHtml(String chatUrl) {
   final property = getPropertyId(chatUrl);
   final widget = getWidgetId(chatUrl);
