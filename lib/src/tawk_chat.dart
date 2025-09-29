@@ -94,14 +94,12 @@ class TawkChat extends StatefulWidget {
 
 class _TawkChatState extends State<TawkChat> {
   late final TawkController _controller;
-  // (no local flag needed currently)
 
   @override
   void initState() {
     super.initState();
     if (widget.controller != null) {
       _controller = widget.controller!;
-      // If both controller and chatUrl were provided, ensure they match.
       if (widget.chatUrl != null && widget.chatUrl != _controller.chatUrl) {
         throw ArgumentError.value(
           widget.chatUrl,
@@ -110,41 +108,36 @@ class _TawkChatState extends State<TawkChat> {
         );
       }
     } else {
-      // widget.chatUrl is non-null because of the constructor assert above.
       _controller = TawkController(chatUrl: widget.chatUrl!);
     }
   }
 
   @override
   void dispose() {
-    // Controller has no heavy resources; if we created it locally we simply
-    // drop references. If we later add WebView reuse, handle cleanup here.
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // On web: keep existing behavior (inject script / floating widget) by
-    // returning the web-specific widget inside the provider.
     final effectiveUrl = widget.chatUrl ?? _controller.chatUrl;
+
+    if (!kIsWeb) {
+      return widget.child ?? const SizedBox.shrink();
+    }
 
     final webHelper = TawkChatWeb(
       chatUrl: effectiveUrl,
       initialHeight: widget.initialHeight,
     );
 
-    if (widget.child != null) {
-      // Render the provided child and keep web helper offstage so it can
-      // attach scripts without affecting layout.
-      return Stack(
-        children: [
-          widget.child!,
-          Offstage(child: webHelper),
-        ],
-      );
-    }
-
-    return kIsWeb ? webHelper : const SizedBox.shrink();
+    return widget.child != null
+        ? Stack(
+            children: [
+              widget.child!,
+              Offstage(child: webHelper),
+            ],
+          )
+        : webHelper;
   }
 }
 
@@ -201,21 +194,15 @@ class _TawkFullScreenPageState extends State<_TawkFullScreenPage> {
   }
 
   Future<void> _loadTawkHtml() async {
-    // Attempt to navigate directly to the chat URL to ensure the WebView
-    // has a proper HTTPS origin. This avoids localStorage access issues
-    // that can occur when scripts are injected into about:blank contexts.
     try {
-      // Load the chat page directly which contains the embedded widget
       final pageUrl = Uri.parse(widget.chatUrl);
       await _controller.loadRequest(pageUrl);
       return;
     } catch (_) {
-      // Fallback: load HTML string with iframe wrapper
       try {
         final html = buildTawkEmbedHtml(widget.chatUrl);
         await _controller.loadHtmlString(html);
       } catch (e) {
-        // If all else fails, this will be caught by the surrounding try-catch
         rethrow;
       }
     }

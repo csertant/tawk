@@ -56,6 +56,21 @@ String buildIframeHtml(String chatUrl, {String? allowAttrs}) {
 ''';
 }
 
+/// Gets Tawk.to script content for DOM injection.
+String getTawkScriptContent(String embedSrc) {
+  return '''
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='$embedSrc';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+''';
+}
+
 /// Builds HTML with Tawk.to script injection for web platforms.
 String _buildWebScriptHtml(String embedSrc) {
   return '''<!doctype html>
@@ -67,15 +82,7 @@ String _buildWebScriptHtml(String embedSrc) {
     <div id="tawk-root"></div>
     <!--Start of Tawk.to Script-->
     <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='$embedSrc';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
+    ${getTawkScriptContent(embedSrc)}
     </script>
     <!--End of Tawk.to Script-->
   </body>
