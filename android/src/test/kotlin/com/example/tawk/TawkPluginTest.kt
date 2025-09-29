@@ -1,4 +1,4 @@
-package com.example.tawk
+package dev.binarybush.tawk
 
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel

@@ -5,10 +5,7 @@ import 'tawk_chat_common.dart';
 
 @JS()
 @staticInterop
-/// JavaScript `document` interop facade used by the web implementation.
-///
-/// This class is a lightweight static interop wrapper that exposes the DOM
-/// `document` interface used to append the tawk embed script.
+/// DOM document interface for script injection.
 class Document {}
 
 extension DocumentExtensions on Document {
@@ -20,10 +17,7 @@ extension DocumentExtensions on Document {
 
 @JS()
 @staticInterop
-/// JavaScript `Element` interop facade used to manipulate DOM nodes.
-///
-/// The extension methods on [Element] provide the subset of DOM
-/// operations required by this package (appendChild, setAttribute, etc.).
+/// DOM element interface for script manipulation.
 class Element {}
 
 extension ElementExtensions on Element {
@@ -40,19 +34,12 @@ extension ElementExtensions on Element {
 @JS('document')
 external Document? get _document;
 
-/// Web-only widget that attaches the official tawk.to embed script to the
-/// host HTML page and provides a placeholder widget in the Flutter tree.
-///
-/// This widget is intended to be placed near the app root so it can
-/// install the tawk script once for the host page. On web it injects the
-/// script into `document.body`. On non-web platforms this class is not
-/// used (see the platform conditional imports).
+/// Web chat widget that injects Tawk.to script.
 class TawkChatWeb extends StatefulWidget {
-  /// The full tawk chat URL (e.g. `https://tawk.to/chat/<property>/<widget>`).
+  /// Chat URL from Tawk.to dashboard.
   final String chatUrl;
 
-  /// Optional initial height to reserve in the Flutter layout for the
-  /// chat placeholder. If null the widget expands to the available space.
+  /// Placeholder height (null = expand).
   final double? initialHeight;
 
   const TawkChatWeb({super.key, required this.chatUrl, this.initialHeight});
@@ -85,54 +72,69 @@ class _TawkChatWebState extends State<TawkChatWeb> {
     final id = 'flutter-tawk-${widget.chatUrl.hashCode}';
     _containerId = id;
 
+    // Remove any existing instance
     final existing = doc.getElementById(id);
-    if (existing != null) doc.body!.removeChild(existing);
+    if (existing != null) {
+      try {
+        doc.body!.removeChild(existing);
+      } catch (e) {
+        // Element might have been removed already, ignore
+      }
+    }
 
     final div = doc.createElement('div');
     div.id = id;
     doc.body!.appendChild(div);
 
-    // Inject the official tawk.to embed script instead of using an iframe.
-    // The expected chatUrl is like: https://tawk.to/chat/<property>/<widgetId>
-    // We convert it to the script src: https://embed.tawk.to/<property>/<widgetId>
-    final propertyId = getPropertyId(widget.chatUrl);
-    final widgetId = getWidgetId(widget.chatUrl);
+    final embedSrc = getEmbedScriptSrc(widget.chatUrl);
 
-    // Create a container div that the widget script can use (optional) and append it.
-    final container = doc.createElement('div');
-    container.id = '$id-container';
-    div.appendChild(container);
-
-    // If we couldn't parse property/widget ids, fall back to embedding the chatUrl in an iframe.
-    if (propertyId == null || widgetId == null) {
+    if (embedSrc == null) {
+      // Fallback: create iframe with the chat URL directly
       final iframe = doc.createElement('iframe');
-      iframe.setAttribute('src', widget.chatUrl);
+      final html = buildIframeHtml(widget.chatUrl);
+      iframe.setAttribute('srcdoc', html);
       iframe.setAttribute('style', 'width:100%;height:100%;border:0;');
       div.appendChild(iframe);
       return;
     }
 
-    // Use the same HTML builder as the WebView implementation and inject its script.
-    final loader = doc.createElement('script');
-    loader.setAttribute('src', 'https://embed.tawk.to/$propertyId/$widgetId');
-    loader.setAttribute('async', 'true');
-    loader.setAttribute('type', 'text/javascript');
-    loader.setAttribute('crossorigin', '*');
+    // Create container for the chat widget
+    final container = doc.createElement('div');
+    container.id = '$id-container';
+    div.appendChild(container);
 
-    // Also inject an inline initializer to set Tawk_API and Tawk_LoadStart.
-    final init = doc.createElement('script');
-    init.setAttribute('type', 'text/javascript');
+    // Inject the official Tawk.to script using the IIFE pattern
+    final script = doc.createElement('script');
+    script.setAttribute('type', 'text/javascript');
     try {
+      script.setAttribute('text', '''
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='$embedSrc';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+''');
+    } catch (e) {
+      // Fallback to separate script elements if text attribute doesn't work
+      final init = doc.createElement('script');
       init.setAttribute(
         'text',
         "var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();",
       );
-    } catch (_) {
-      // ignore if not supported; loader will still load the widget
+      final loader = doc.createElement('script');
+      loader.setAttribute('src', embedSrc);
+      loader.setAttribute('async', 'true');
+      loader.setAttribute('type', 'text/javascript');
+      loader.setAttribute('crossorigin', '*');
+      div.appendChild(init);
+      div.appendChild(loader);
+      return;
     }
-
-    div.appendChild(init);
-    div.appendChild(loader);
+    div.appendChild(script);
   }
 
   @override

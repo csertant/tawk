@@ -1,23 +1,12 @@
-// Minimal web entry file for the tawk plugin.
-// This file is referenced by pubspec.yaml (fileName) and can be used to
-// register a web implementation if needed. For now it simply re-exports
-// the web widget.
+// Web entry point for Tawk.to plugin.
 
 export 'src/tawk_chat_web.dart' show TawkChatWeb;
 
-/// Minimal web entry file for the plugin.
-///
-/// This provides a `registerWith` hook to satisfy the generated web
-/// plugin registrant. The current implementation is a no-op because the
-/// web behavior is implemented by the `TawkChatWeb` widget which apps can
-/// use directly.
+/// Web plugin registration.
 class TawkWeb {
   const TawkWeb();
 
-  /// Registration hook invoked by generated plugin registrant code.
-  ///
-  /// The `registrar` parameter is intentionally typed as `Object` to avoid
-  /// importing flutter_web_plugins in this file. Implement it if platform
+  /// Plugin registration hook (no-op).
   /// registration is later required.
   static void registerWith(Object registrar) {
     // No-op registration hook. Provided to satisfy generated registrant.

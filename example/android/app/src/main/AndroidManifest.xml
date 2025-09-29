@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Allow network access for the embedded WebView. Apps embedding this
+         plugin must declare the INTERNET permission so the WebView can
+         load remote resources (tawk embed script). -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="tawk_example"
         android:name="${applicationName}"
@@ -31,6 +35,11 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <!-- Hint for back-navigation APIs (Android 13 / API 33+).
+         Note: targetSdkVersion is commonly configured in module Gradle (build.gradle).
+         Set targetSdkVersion >= 33 in your app Gradle to opt into OnBackInvoked APIs.
+    -->
+    <uses-sdk android:targetSdkVersion="33" />
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.

@@ -1,4 +1,4 @@
-package com.example.tawk_example
+package dev.binarybush.tawk_example
 
 import io.flutter.embedding.android.FlutterActivity
 
