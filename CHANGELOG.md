@@ -2,13 +2,22 @@
 
 ### Added
 
-- Basic `TawkChat` widget that embeds a tawk.to chat.
-	- Web: injects the tawk.to script into the host page using `dart:js_interop`.
-	- Mobile/Desktop: uses `webview_flutter` to host the tawk.to embed inside a minimal HTML page.
-- Example app in `example/` demonstrating usage.
-- Basic unit/widget tests in `test/` and example tests in `example/test/`.
+- **TawkChat widget** with flexible integration options
+  - Controller-based API with `TawkController` for programmatic control
+  - Direct URL usage for simple integrations
+  - `TawkController.of(context)` for accessing controller anywhere in widget tree
 
-### Notes
+- **Cross-platform support**
+  - **Web**: Efficient DOM script injection using `dart:js_interop`
+  - **Mobile/Desktop**: Full-screen WebView integration with `webview_flutter`
+  - Automatic platform detection and appropriate rendering
 
-- This is the initial release; please test the example on web and mobile manually. Future releases will add a controller API, event callbacks, and an inline HtmlElementView web example.
+- **Developer experience**
+  - Comprehensive example app with best practices
+  - Complete test suite covering URL parsing and widget functionality
+  - Modern Dart features (record types, null safety)
 
+- **Security & Privacy**
+  - Minimal permission model
+  - Secure iframe attributes
+  - OnBackInvokedCallback support for Android 13+

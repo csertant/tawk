@@ -86,9 +86,9 @@ class TawkChat extends StatefulWidget {
     this.controller,
     this.child,
   }) : assert(
-         chatUrl != null || controller != null,
-         'Either chatUrl or controller with chatUrl must be provided',
-       );
+          chatUrl != null || controller != null,
+          'Either chatUrl or controller with chatUrl must be provided',
+        );
 
   @override
   State<TawkChat> createState() => _TawkChatState();

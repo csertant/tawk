@@ -6,98 +6,208 @@
 
 A small Flutter plugin that embeds the tawk.to chat widget. Works on web (DOM injection) and on mobile/desktop using a WebView.
 
-## Quick example
+## Quick Example
 
 ```dart
 import 'package:flutter/material.dart';
 import 'package:tawk/tawk.dart';
-// Create a single controller and place TawkChat near the app root so the
-// embed script is installed on web and the controller is available across
-// the app on mobile.
+
 void main() {
-	final tawkController = TawkController(chatUrl: 'https://tawk.to/chat/<id>/<widget>');
-	runApp(MyApp(tawkController: tawkController));
+  // Create a single controller with your Tawk.to chat URL
+  final tawkController = TawkController(
+    chatUrl: 'https://tawk.to/chat/YOUR_PROPERTY_ID/YOUR_WIDGET_ID',
+  );
+  runApp(ExampleApp(tawkController: tawkController));
 }
 
-class MyApp extends StatelessWidget {
-	final TawkController tawkController;
-	const MyApp({required this.tawkController, super.key});
+class ExampleApp extends StatelessWidget {
+  final TawkController tawkController;
+  const ExampleApp({required this.tawkController, super.key});
 
-	@override
-	Widget build(BuildContext context) {
-		return MaterialApp(
-			home: Stack(
-				children: [
-					HomeScreen(),
-					// Place the TawkChat near the app root. On web this installs the
-					// tawk script (floating widget). On mobile the controller is
-					// registered and can open a full-screen WebView when requested.
-					// You can pass only the controller (the widget will use
-					// controller.chatUrl), avoiding duplicate chatUrl parameters.
-					TawkChat(controller: tawkController),
-				],
-			),
-		);
-	}
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Tawk Example',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      // Place TawkChat at the app root using MaterialApp.builder
+      // This ensures the controller is available throughout the app
+      builder: (context, child) {
+        return TawkChat(
+          controller: tawkController,
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+      home: HomePage(),
+    );
+  }
 }
 
-class HomeScreen extends StatelessWidget {
-	@override
-	Widget build(BuildContext context) {
-		// Obtain the controller and open the chat when needed.
-		final controller = TawkController.of(context);
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
-		return Scaffold(
-			appBar: AppBar(title: const Text('Support')),
-			body: Center(
-				child: ElevatedButton(
-					onPressed: () => controller.open(context),
-					child: const Text('Open chat'),
-				),
-			),
-		);
-	}
+  @override
+  Widget build(BuildContext context) {
+    // Access the controller from anywhere in the app
+    final controller = TawkController.of(context);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Tawk Example')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () => controller.open(context),
+          child: const Text('Open Tawk Chat'),
+        ),
+      ),
+    );
+  }
 }
 ```
-
-See `example/lib/main.dart` for a working example that demonstrates how to provide your tawk chat URL.
 
 ## Installation
 
-Add the package to your `pubspec.yaml` (or run `flutter pub add tawk`).
+### 1. Add dependency
 
-On web and mobile the plugin opens the tawk chat URL in an iframe/webview. Provide a full chat URL (e.g. https://tawk.to/chat/<id>/<widget>).
+```yaml
+dependencies:
+  tawk: ^0.1.0
+```
+
+Or run:
+```bash
+flutter pub add tawk
+```
+
+### 2. Get your Tawk.to chat URL
+
+1. Sign up at [tawk.to](https://www.tawk.to/) and create a property
+2. Go to **Administration** → **Chat Widget**
+3. Copy your chat URL (format: `https://tawk.to/chat/PROPERTY_ID/WIDGET_ID`)
+
+### 3. Import and use
+
+```dart
+import 'package:tawk/tawk.dart';
+```
 
 ## Usage
 
-Recommended pattern (single controller + root placement)
+### Recommended Pattern
 
-1) Create a single `TawkController` (for example in `main()`).
-2) Place `TawkChat` near the app root so it installs the script on web and
-	 exposes the controller to the app via `TawkController.of(context)`.
-3) Open the chat programmatically with `controller.open(context)` where you
-	 need it (e.g., a FAB or menu action).
+1. **Create a controller** with your Tawk.to chat URL
+2. **Place TawkChat at app root** using `MaterialApp.builder`
+3. **Open chat programmatically** from anywhere using `controller.open(context)`
 
-Minimal imperative usage example
+### Alternative Usage Patterns
 
+**Direct URL (creates controller internally):**
 ```dart
-final controller = TawkController(chatUrl: 'https://tawk.to/chat/<id>/<widget>');
-
-// place the widget near the root (only controller required):
-TawkChat(controller: controller);
-
-// open from anywhere in the subtree:
-TawkController.of(context).open(context);
+TawkChat(
+  chatUrl: 'https://tawk.to/chat/YOUR_PROPERTY_ID/YOUR_WIDGET_ID',
+  child: MyApp(),
+)
 ```
 
-Platform behavior
-- Web: the plugin injects the official `tawk.to` embed script into the
-	page (once). That script renders the floating chat widget (bottom-right)
-	in the host page. The `TawkChat` widget on web is primarily responsible for
-	installing the script and exposing the controller.
-- Mobile/Desktop: the plugin opens a full-screen page with a WebView that
-	loads the same embed HTML (so behavior is consistent); this keeps the
-	chat experience platform-conformant on mobile.
+**Manual controller with Stack:**
+```dart
+Stack(
+  children: [
+    MyApp(),
+    TawkChat(controller: tawkController),
+  ],
+)
+```
 
-Privacy / Legal:
-This package includes an integration with the third-party tawk.to service. You must provide your own chat URL and ensure you comply with tawk.to's terms and applicable privacy laws (GDPR, CCPA, etc.).
+## Platform Behavior
+
+### 🌐 Web
+- Injects the official Tawk.to embed script into the document head
+- Renders the standard floating chat widget (bottom-right corner)
+- Uses `dart:js_interop` for efficient DOM manipulation
+- Supports both embedded and standalone modes
+
+### 📱 Mobile/Desktop
+- Opens full-screen WebView with Tawk.to chat interface
+- Uses `webview_flutter` for native platform integration
+- Automatic fallback to iframe if direct URL loading fails
+- Optimized WebView settings for chat functionality
+
+## Features
+
+- ✅ **Cross-platform**: Web, iOS, Android
+- ✅ **Optimized performance**: Simple URL parsing, efficient DOM injection, lightweight widget
+- ✅ **Flexible API**: Controller-based or direct URL usage
+- ✅ **Security-focused**: Minimal permissions, secure iframe attributes
+- ✅ **Modern Dart**: Uses latest language features and best practices
+
+## API Reference
+
+### TawkController
+
+```dart
+// Create controller
+final controller = TawkController(chatUrl: 'https://tawk.to/chat/...');
+
+// Open chat (mobile: opens WebView, web: activates existing widget)
+await controller.open(context);
+
+// Close chat (mobile only, closes WebView)
+controller.close(context);
+
+// Check if chat is currently open
+final isOpen = await controller.isOpen();
+
+// Access controller from widget tree
+final controller = TawkController.of(context);
+```
+
+### TawkChat Widget
+
+```dart
+// With controller (recommended)
+TawkChat(
+  controller: controller,
+  child: MyApp(), // optional
+)
+
+// Direct URL (creates internal controller)
+TawkChat(
+  chatUrl: 'https://tawk.to/chat/...',
+  initialHeight: 400, // web only, optional
+  child: MyApp(), // optional
+)
+```
+
+## Troubleshooting
+
+### Chat not appearing on web
+- Verify your chat URL format: `https://tawk.to/chat/PROPERTY_ID/WIDGET_ID`
+- Check browser console for script loading errors
+- Ensure TawkChat widget is in the widget tree
+
+### Android predictive back navigation issues
+- Add `android:enableOnBackInvokedCallback="true"` to your AndroidManifest.xml
+
+### WebView issues on mobile
+- Ensure INTERNET permission is declared in AndroidManifest.xml
+- Check that the chat URL is accessible from mobile browsers
+
+## Privacy & Legal
+
+⚠️ **Important**: This package integrates with the third-party Tawk.to service. You must:
+- Provide your own Tawk.to chat URL and account
+- Comply with Tawk.to's terms of service
+- Follow applicable privacy laws (GDPR, CCPA, etc.)
+- Update your privacy policy to mention Tawk.to integration
+
+## Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new functionality
+4. Pass all CI checks
+5. Submit a pull request
+
+## License
+
+GPL-3.0-or-later. See [LICENSE](LICENSE) for details.

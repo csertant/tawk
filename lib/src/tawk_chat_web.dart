@@ -4,6 +4,7 @@ import 'tawk_chat_common.dart';
 
 @JS()
 @staticInterop
+
 /// DOM document interface for script injection.
 class Document {}
 
@@ -16,12 +17,13 @@ extension DocumentExtensions on Document {
 
 @JS()
 @staticInterop
+
 /// DOM element interface for script manipulation.
 class Element {}
 
 extension ElementExtensions on Element {
   external set id(String id);
-  external String? get id;
+  external String get id;
   external Element appendChild(Element child);
   external Element removeChild(Element child);
   external void setAttribute(String name, String value);
