@@ -26,9 +26,6 @@ jobs:
       - name: Get Flutter packages
         run: flutter pub get
 
-      - name: Generate l10n files
-        run: flutter gen-l10n
-
       - name: Flutter lint
         run: flutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
 
