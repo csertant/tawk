@@ -9,40 +9,36 @@ String? getEmbedScriptSrc(String chatUrl) {
   return 'https://embed.tawk.to/$prop/$wid';
 }
 
-/// Extracts property ID from chat URL.
-String? getPropertyId(String chatUrl) {
+/// Parses chat URL and returns (propertyId, widgetId) or (null, null) if invalid.
+(String?, String?) _parseTawkUrl(String chatUrl) {
   try {
     final uri = Uri.tryParse(chatUrl);
-    if (uri == null) return null;
-    final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
-    // Expecting .../chat/<property>/<widget>
-    final chatIndex = segments.indexOf('chat');
-    if (chatIndex >= 0 && segments.length > chatIndex + 1) {
-      return segments[chatIndex + 1];
+    if (uri == null) return (null, null);
+
+    final segments = uri.pathSegments;
+    if (segments.length < 3) return (null, null);
+
+    // Find 'chat' segment and check we have property and widget after it
+    for (int i = 0; i < segments.length - 2; i++) {
+      if (segments[i] == 'chat' &&
+          segments[i + 1].isNotEmpty &&
+          segments[i + 2].isNotEmpty) {
+        return (segments[i + 1], segments[i + 2]);
+      }
     }
   } catch (_) {}
-  return null;
+  return (null, null);
 }
 
+/// Extracts property ID from chat URL.
+String? getPropertyId(String chatUrl) => _parseTawkUrl(chatUrl).$1;
+
 /// Extracts widget ID from chat URL.
-String? getWidgetId(String chatUrl) {
-  try {
-    final uri = Uri.tryParse(chatUrl);
-    if (uri == null) return null;
-    final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
-    // widget id is the last path segment when URL matches /chat/<property>/<widget>
-    if (segments.length >= 3 && segments[segments.length - 3] == 'chat') {
-      return segments.last;
-    }
-  } catch (_) {}
-  return null;
-}
+String? getWidgetId(String chatUrl) => _parseTawkUrl(chatUrl).$2;
 
 /// Builds HTML page with iframe for mobile WebView fallback.
 String buildIframeHtml(String chatUrl, {String? allowAttrs}) {
-  final allow =
-      allowAttrs ??
-      'clipboard-write; encrypted-media; fullscreen; geolocation; microphone; camera';
+  final allow = allowAttrs ?? 'clipboard-write';
   return '''<!doctype html>
 <html>
   <head>

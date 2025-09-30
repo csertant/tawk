@@ -1,4 +1,3 @@
-// Use dart:js_interop static interop for DOM access (modern recommended API).
 import 'dart:js_interop';
 import 'package:flutter/material.dart';
 import 'tawk_chat_common.dart';
@@ -26,9 +25,7 @@ extension ElementExtensions on Element {
   external Element appendChild(Element child);
   external Element removeChild(Element child);
   external void setAttribute(String name, String value);
-  external set src(String v);
-  external set async(bool v);
-  external set type(String v);
+  external set textContent(String content);
 }
 
 @JS('document')
@@ -51,7 +48,7 @@ class TawkChatWeb extends StatefulWidget {
 class _TawkChatWebState extends State<TawkChatWeb> {
   String? _containerId;
 
-  Document get doc => _document!;
+  Document get document => _document!;
 
   @override
   void initState() {
@@ -62,69 +59,68 @@ class _TawkChatWebState extends State<TawkChatWeb> {
   @override
   void dispose() {
     if (_containerId != null) {
-      final existing = doc.getElementById(_containerId!);
-      if (existing != null) doc.body!.removeChild(existing);
+      final existing = document.getElementById(_containerId!);
+      if (existing != null) document.body!.removeChild(existing);
     }
     super.dispose();
   }
 
   void _attachTawk() {
-    final id = 'flutter-tawk-${widget.chatUrl.hashCode}';
+    final id = 'tawk-${widget.chatUrl.hashCode}';
     _containerId = id;
 
     // Remove any existing instance
-    final existing = doc.getElementById(id);
+    final existing = document.getElementById(id);
     if (existing != null) {
       try {
-        doc.body!.removeChild(existing);
+        document.body!.removeChild(existing);
       } catch (e) {
         // Element might have been removed already, ignore
       }
     }
 
-    final div = doc.createElement('div');
-    div.id = id;
-    doc.body!.appendChild(div);
-
     final embedSrc = getEmbedScriptSrc(widget.chatUrl);
 
     if (embedSrc == null) {
       // Fallback: create iframe with the chat URL directly
-      final iframe = doc.createElement('iframe');
+      final div = document.createElement('div');
+      div.id = id;
+      final iframe = document.createElement('iframe');
       final html = buildIframeHtml(widget.chatUrl);
       iframe.setAttribute('srcdoc', html);
       iframe.setAttribute('style', 'width:100%;height:100%;border:0;');
       div.appendChild(iframe);
+      document.body!.appendChild(div);
       return;
     }
 
-    // Create container for the chat widget
-    final container = doc.createElement('div');
-    container.id = '$id-container';
-    div.appendChild(container);
-
-    // Inject the official Tawk.to script using the IIFE pattern
-    final script = doc.createElement('script');
+    // Inject the script directly into the head (standard Tawk approach)
+    final script = document.createElement('script');
     script.setAttribute('type', 'text/javascript');
     try {
-      script.setAttribute('text', getTawkScriptContent(embedSrc));
+      script.textContent = getTawkScriptContent(embedSrc);
+      document.head!.appendChild(script);
     } catch (e) {
-      // Fallback to separate script elements if text attribute doesn't work
-      final init = doc.createElement('script');
-      init.setAttribute(
-        'text',
-        "var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();",
-      );
-      final loader = doc.createElement('script');
+      // Fallback to separate script elements
+      final init = document.createElement('script');
+      init.setAttribute('type', 'text/javascript');
+      init.textContent =
+          "var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();";
+
+      final loader = document.createElement('script');
       loader.setAttribute('src', embedSrc);
       loader.setAttribute('async', 'true');
       loader.setAttribute('type', 'text/javascript');
       loader.setAttribute('crossorigin', '*');
-      div.appendChild(init);
-      div.appendChild(loader);
-      return;
+      document.head!.appendChild(init);
+      document.head!.appendChild(loader);
     }
-    div.appendChild(script);
+
+    // Create a marker div for cleanup
+    final div = document.createElement('div');
+    div.id = id;
+    div.setAttribute('style', 'display:none;');
+    document.body!.appendChild(div);
   }
 
   @override

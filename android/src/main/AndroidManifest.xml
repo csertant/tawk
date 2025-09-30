@@ -4,12 +4,7 @@
          Hosts embedding this plugin should also declare this permission in
          their application manifest. -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!--
-      OnBackInvokedCallback (Android 13 / API 33) is provided by the platform
-      starting at API level 33. Declaring a targetSdkVersion of 33 or higher
-      ensures the newer back-navigation APIs are available. Most projects
-      set targetSdkVersion in Gradle (module-level build.gradle). This
-      manifest entry is provided as a hint and may be overridden by Gradle.
-    -->
-    <uses-sdk android:targetSdkVersion="33" />
+    <application
+        android:enableOnBackInvokedCallback="true">
+    </application>
 </manifest>

@@ -18,14 +18,15 @@ class TawkController {
   Future<void> open(BuildContext context) async {
     if (kIsWeb) {
       // For web, the embed script normally renders a floating widget.
-      // If developers want a page, they can push their own route. Here we
-      // provide no-op or could call JS interop if Tawk_API supports it.
+      // If developers want a page, they can push their own route. The plugin
+      // provides no-op or could call JS interop if Tawk_API supports it.
       return;
     }
 
     if (_isOpen) {
       return;
     }
+
     _isOpen = true;
     await Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => _TawkFullScreenPage(chatUrl: chatUrl)),
@@ -36,6 +37,7 @@ class TawkController {
   /// Closes chat interface.
   void close(BuildContext context) {
     if (Navigator.canPop(context)) Navigator.of(context).pop();
+    _isOpen = false;
   }
 
   Future<bool> isOpen() async => _isOpen;
@@ -130,14 +132,16 @@ class _TawkChatState extends State<TawkChat> {
       initialHeight: widget.initialHeight,
     );
 
-    return widget.child != null
-        ? Stack(
-            children: [
-              widget.child!,
-              Offstage(child: webHelper),
-            ],
-          )
-        : webHelper;
+    if (widget.child != null) {
+      return Stack(
+        children: [
+          widget.child!,
+          Offstage(child: webHelper),
+        ],
+      );
+    }
+
+    return webHelper;
   }
 }
 
@@ -162,7 +166,7 @@ class _TawkFullScreenPageState extends State<_TawkFullScreenPage> {
       ..setBackgroundColor(const Color(0x00000000));
 
     // Some embed scripts perform UA sniffing or require a non-empty user
-    // agent to run certain features. Set a conservative, modern UA string
+    // agent to run certain features. The plugin sets a conservative, modern UA string
     // to improve compatibility with tawk's embed scripts.
     try {
       _controller.setUserAgent(
@@ -215,7 +219,7 @@ class _TawkFullScreenPageState extends State<_TawkFullScreenPage> {
         title: const Text('Tawk Chat'),
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => TawkController.of(context).close(context),
         ),
       ),
       body: wv.WebViewWidget(controller: _controller),
