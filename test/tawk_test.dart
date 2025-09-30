@@ -49,17 +49,18 @@ void main() {
 
   group('URL Parsing', () {
     test('should parse valid Tawk.to URLs correctly', () {
-      const testUrl = 'https://tawk.to/chat/68cd0026a6f19a1922e79939/1j5gch5k0';
+      const testUrl =
+          'https://tawk.to/chat/70alkkcd0026a6f19a192939/1ajf5ggchc5yk00';
 
       final propertyId = getPropertyId(testUrl);
       final widgetId = getWidgetId(testUrl);
       final embedSrc = getEmbedScriptSrc(testUrl);
 
-      expect(propertyId, '68cd0026a6f19a1922e79939');
-      expect(widgetId, '1j5gch5k0');
+      expect(propertyId, '70alkkcd0026a6f19a192939');
+      expect(widgetId, '1ajf5ggchc5yk00');
       expect(
         embedSrc,
-        'https://embed.tawk.to/68cd0026a6f19a1922e79939/1j5gch5k0',
+        'https://embed.tawk.to/70alkkcd0026a6f19a192939/1ajf5ggchc5yk00',
       );
     });
 

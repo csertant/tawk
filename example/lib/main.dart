@@ -5,7 +5,7 @@ void main() {
   // Create a single controller and pass it into the app so it's available
   // globally and the TawkChat widget doesn't need a duplicate chatUrl.
   final tawkController = TawkController(
-    chatUrl: 'https://tawk.to/chat/68cd0026a6f19a1922e79939/1j5gch5k0',
+    chatUrl: 'https://tawk.to/chat/<property_id>/<widget>',
   );
   runApp(ExampleApp(tawkController: tawkController));
 }

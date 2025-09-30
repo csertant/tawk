@@ -11,16 +11,15 @@ issue_tracker: https://github.com/csertant/tawk/issues
 license: GPL-3.0-or-later
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
-  flutter: '>=3.3.0'
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: '>=3.27.0'
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
-  webview_flutter: ^4.0.7
+  webview_flutter: ^4.13.0
 
 dev_dependencies:
   flutter_test:
