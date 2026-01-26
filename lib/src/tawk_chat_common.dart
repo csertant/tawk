@@ -40,50 +40,50 @@ String? getWidgetId(String chatUrl) => _parseTawkUrl(chatUrl).$2;
 String buildIframeHtml(String chatUrl, {String? allowAttrs}) {
   final allow = allowAttrs ?? 'clipboard-write';
   return '''<!doctype html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>html,body{height:100%;margin:0;padding:0;}#tawk-iframe{height:100%;width:100%;border:0;}</style>
-  </head>
-  <body>
-    <iframe id="tawk-iframe" src="$chatUrl" frameborder="0" allow="$allow"></iframe>
-  </body>
-</html>
-''';
+    <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>html,body{height:100%;margin:0;padding:0;}#tawk-iframe{height:100%;width:100%;border:0;}</style>
+      </head>
+      <body>
+        <iframe id="tawk-iframe" src="$chatUrl" frameborder="0" allow="$allow"></iframe>
+      </body>
+    </html>
+    ''';
 }
 
 /// Gets Tawk.to script content for DOM injection.
 String getTawkScriptContent(String embedSrc) {
   return '''
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='$embedSrc';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-''';
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='$embedSrc';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    ''';
 }
 
 /// Builds HTML with Tawk.to script injection for web platforms.
 String _buildWebScriptHtml(String embedSrc) {
   return '''<!doctype html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
-  <body>
-    <div id="tawk-root"></div>
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-    ${getTawkScriptContent(embedSrc)}
-    </script>
-    <!--End of Tawk.to Script-->
-  </body>
-</html>
-''';
+    <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body>
+        <div id="tawk-root"></div>
+        <!--Start of Tawk.to Script-->
+        <script type="text/javascript">
+        ${getTawkScriptContent(embedSrc)}
+        </script>
+        <!--End of Tawk.to Script-->
+      </body>
+    </html>
+    ''';
 }
 
 /// Builds platform-appropriate HTML: script injection for web, iframe for mobile.
