@@ -68,12 +68,14 @@ class TawkController {
 /// ```
 class TawkChat extends StatefulWidget {
   /// Chat URL from Tawk.to dashboard (optional if controller is provided).
+  /// Must match controller.chatUrl if both are provided.
   final String? chatUrl;
 
   /// Initial height for web widget placeholder.
   final double? initialHeight;
 
   /// Pre-configured controller (optional if chatUrl is provided).
+  /// Must have matching chatUrl if both are provided.
   final TawkController? controller;
 
   /// Child widget to wrap.
