@@ -9,32 +9,32 @@ String? getEmbedScriptSrc(String chatUrl) {
   return 'https://embed.tawk.to/$prop/$wid';
 }
 
-/// Parses chat URL and returns (propertyId, widgetId) or (null, null) if invalid.
-(String?, String?) _parseTawkUrl(String chatUrl) {
+/// Parses chat URL and returns `{propertyId, widgetId}` (both nullable).
+({String? propertyId, String? widgetId}) _parseTawkUrl(String chatUrl) {
   try {
     final uri = Uri.tryParse(chatUrl);
-    if (uri == null) return (null, null);
+    if (uri == null) return (propertyId: null, widgetId: null);
 
     final segments = uri.pathSegments;
-    if (segments.length < 3) return (null, null);
+    if (segments.length < 3) return (propertyId: null, widgetId: null);
 
     // Find 'chat' segment and check we have property and widget after it
     for (int i = 0; i < segments.length - 2; i++) {
       if (segments[i] == 'chat' &&
           segments[i + 1].isNotEmpty &&
           segments[i + 2].isNotEmpty) {
-        return (segments[i + 1], segments[i + 2]);
+        return (propertyId: segments[i + 1], widgetId: segments[i + 2]);
       }
     }
   } catch (_) {}
-  return (null, null);
+  return (propertyId: null, widgetId: null);
 }
 
 /// Extracts property ID from chat URL.
-String? getPropertyId(String chatUrl) => _parseTawkUrl(chatUrl).$1;
+String? getPropertyId(String chatUrl) => _parseTawkUrl(chatUrl).propertyId;
 
 /// Extracts widget ID from chat URL.
-String? getWidgetId(String chatUrl) => _parseTawkUrl(chatUrl).$2;
+String? getWidgetId(String chatUrl) => _parseTawkUrl(chatUrl).widgetId;
 
 /// Builds HTML page with iframe for mobile WebView fallback.
 String buildIframeHtml(String chatUrl, {String? allowAttrs}) {

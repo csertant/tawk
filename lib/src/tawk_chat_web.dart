@@ -132,8 +132,6 @@ class _TawkChatWebState extends State<TawkChatWeb> {
       color: Colors.transparent,
       child: const Center(child: Text('Tawk chat (web)')),
     );
-
-    if (height != null) return SizedBox(height: height, child: placeholder);
-    return SizedBox.expand(child: placeholder);
+    return SizedBox(height: height, child: placeholder);
   }
 }

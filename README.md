@@ -65,7 +65,7 @@ class HomePage extends StatelessWidget {
 
 ## Installation
 
-### 1. Add dependency
+### Add dependency
 
 ```yaml
 dependencies:
@@ -77,13 +77,13 @@ Or run:
 flutter pub add tawk
 ```
 
-### 2. Get your Tawk.to chat URL
+### Get your Tawk.to chat URL
 
 1. Sign up at [tawk.to](https://www.tawk.to/) and create a property
 2. Go to **Administration** → **Chat Widget**
 3. Copy your chat URL (format: `https://tawk.to/chat/PROPERTY_ID/WIDGET_ID`)
 
-### 3. Import and use
+### Import and use
 
 ```dart
 import 'package:tawk/tawk.dart';
@@ -96,6 +96,8 @@ import 'package:tawk/tawk.dart';
 1. **Create a controller** with your Tawk.to chat URL
 2. **Place TawkChat at app root** using `MaterialApp.builder`
 3. **Open chat programmatically** from anywhere using `controller.open(context)`
+
+See the Example app code above for a complete implementation.
 
 ### Alternative Usage Patterns
 
@@ -133,11 +135,11 @@ Stack(
 
 ## Features
 
-- ✅ **Cross-platform**: Web, iOS, Android
-- ✅ **Optimized performance**: Simple URL parsing, efficient DOM injection, lightweight widget
-- ✅ **Flexible API**: Controller-based or direct URL usage
-- ✅ **Security-focused**: Minimal permissions, secure iframe attributes
-- ✅ **Modern Dart**: Uses latest language features and best practices
+- **Cross-platform**: Web, iOS, Android
+- **Optimized performance**: Simple URL parsing, efficient DOM injection, lightweight widget
+- **Flexible API**: Controller-based or direct URL usage
+- **Security-focused**: Minimal permissions, secure iframe attributes
+- **Modern Dart**: Uses latest language features and best practices
 
 ## API Reference
 
@@ -203,11 +205,20 @@ TawkChat(
 
 Contributions are welcome! Please:
 1. Fork the repository
-2. Create a feature branch
+2. Create a new branch
 3. Add tests for new functionality
 4. Pass all CI checks
 5. Submit a pull request
 
-## License
+## Metadata
+:green_book: [Documentation](https://pub.dev/documentation/tawk/latest/)
 
-GPL-3.0-or-later. See [LICENSE](LICENSE) for details.
+:email: [contact@binarybush.dev](mailto:contact@binarybush.dev)
+
+:bug: [Bug report](https://github.com/BinaryBush/tawk/issues/new?assignees=&labels=bug%2Ctriage&template=1_bug.yaml)
+
+:zap: [Requesting features](https://github.com/BinaryBush/tawk/issues/new?assignees=&labels=new-feature&template=2_feature_request.yaml)
+
+:red_book: [License](LICENSE)
+
+Every opened issue is very much appreciated!

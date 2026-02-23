@@ -48,7 +48,7 @@ void main() {
 
       // Verify controller can be accessed
       expect(controller.chatUrl, testChatUrl);
-      expect(await controller.isOpen(), false);
+      expect(controller.isOpen(), false);
     });
   });
 }

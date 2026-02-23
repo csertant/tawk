@@ -15,7 +15,7 @@ void main() {
       final controller = TawkController(
         chatUrl: 'https://tawk.to/chat/test/test',
       );
-      expect(await controller.isOpen(), false);
+      expect(controller.isOpen(), false);
     });
   });
 
@@ -24,7 +24,7 @@ void main() {
       const testUrl = 'https://tawk.to/chat/test/test';
 
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: TawkChat(chatUrl: testUrl, child: Text('Test')),
         ),
       );

@@ -4,14 +4,14 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'tawk'
-  s.version          = '0.0.1'
-  s.summary          = 'A new Flutter plugin project.'
+  s.version          = '0.1.0'
+  s.summary          = 'Flutter plugin that embeds the tawk.to chat widget (web + WebView).'
   s.description      = <<-DESC
-A new Flutter plugin project.
+A small Flutter plugin that embeds the tawk.to chat widget. Works on web (DOM injection) and on mobile/desktop using a WebView.
                        DESC
-  s.homepage         = 'http://example.com'
-  s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.homepage         = 'https://github.com/csertant/tawk'
+  s.license          = { :type => 'GPL-3.0', :file => '../LICENSE' }
+  s.author           = { 'Tamas Csertan' => 'tamas@binarybush.dev', 'Mark Sarvari' => 'mark@binarybush.dev' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'

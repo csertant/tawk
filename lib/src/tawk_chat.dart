@@ -40,7 +40,7 @@ class TawkController {
     _isOpen = false;
   }
 
-  Future<bool> isOpen() async => _isOpen;
+  bool isOpen() => _isOpen;
 
   /// Gets controller from nearest TawkChat ancestor.
   static TawkController of(BuildContext context) {
@@ -55,7 +55,7 @@ class TawkController {
 }
 
 /// Inherited widget exposing the [TawkController] to descendants.
-// Controller provider removed: TawkChat now exposes its controller via its State.
+/// TawkChat exposes its controller via its State.
 
 /// Tawk.to chat integration widget.
 ///
@@ -67,27 +67,33 @@ class TawkController {
 /// )
 /// ```
 class TawkChat extends StatefulWidget {
-  /// Chat URL from Tawk.to dashboard (optional if controller provided).
+  /// Chat URL from Tawk.to dashboard (optional if controller is provided).
   final String? chatUrl;
 
   /// Initial height for web widget placeholder.
   final double? initialHeight;
 
-  /// Pre-configured controller (optional).
+  /// Pre-configured controller (optional if chatUrl is provided).
   final TawkController? controller;
 
   /// Child widget to wrap.
   final Widget? child;
 
-  const TawkChat({
+  TawkChat({
     super.key,
     this.chatUrl,
     this.initialHeight,
     this.controller,
     this.child,
-  }) : assert(
+  })  : assert(
           chatUrl != null || controller != null,
           'Either chatUrl or controller with chatUrl must be provided',
+        ),
+        assert(
+          chatUrl == null ||
+              controller == null ||
+              chatUrl == controller.chatUrl,
+          'chatUrl must match controller.chatUrl when both are provided',
         );
 
   @override
@@ -102,13 +108,6 @@ class _TawkChatState extends State<TawkChat> {
     super.initState();
     if (widget.controller != null) {
       _controller = widget.controller!;
-      if (widget.chatUrl != null && widget.chatUrl != _controller.chatUrl) {
-        throw ArgumentError.value(
-          widget.chatUrl,
-          'chatUrl',
-          'chatUrl must match controller.chatUrl when both are provided',
-        );
-      }
     } else {
       _controller = TawkController(chatUrl: widget.chatUrl!);
     }
@@ -121,14 +120,12 @@ class _TawkChatState extends State<TawkChat> {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveUrl = widget.chatUrl ?? _controller.chatUrl;
-
     if (!kIsWeb) {
       return widget.child ?? const SizedBox.shrink();
     }
 
     final webHelper = TawkChatWeb(
-      chatUrl: effectiveUrl,
+      chatUrl: _controller.chatUrl,
       initialHeight: widget.initialHeight,
     );
 

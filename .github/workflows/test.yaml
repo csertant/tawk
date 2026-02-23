@@ -22,24 +22,16 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+          flutter-version: 3.38.5
 
       - name: Get Flutter packages
         run: flutter pub get
 
       - name: Flutter lint
-        run: flutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
+        run: flutter analyze --no-pub --no-fatal-infos
 
       - name: Flutter format
         run: dart format --set-exit-if-changed .
-
-      # - name: Generate docs
-      #   run: dart doc --output doc/api
-
-      # - name: Upload docs artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: docs
-      #     path: doc/api
 
       - name: Run tests
         run: flutter test --coverage
