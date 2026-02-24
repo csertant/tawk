@@ -53,7 +53,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-// Alternate minimal usage: you can also pass just a chatUrl and let the
-// widget create its own controller internally:
-// TawkChat(chatUrl: 'https://tawk.to/chat/<id>/<widget>')

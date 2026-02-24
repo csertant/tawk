@@ -1,21 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import 'tawk_chat_stub.dart' if (dart.library.html) 'tawk_chat_web.dart';
-import 'tawk_chat_common.dart';
 import 'package:webview_flutter/webview_flutter.dart' as wv;
+
+import 'tawk_chat_common.dart';
+import 'tawk_chat_stub.dart' if (dart.library.html) 'tawk_chat_web.dart';
 
 /// Controls chat UI: floating widget on web, WebView on mobile.
 class TawkController {
+  /// Creates controller with chat URL from Tawk.to dashboard.
+  TawkController({required this.chatUrl});
+
   /// The chat URL from your Tawk.to dashboard.
   final String chatUrl;
   bool _isOpen = false;
 
-  /// Creates controller with chat URL from Tawk.to dashboard.
-  TawkController({required this.chatUrl});
-
   /// Opens chat interface.
-  Future<void> open(BuildContext context) async {
+  Future<void> open(final BuildContext context) async {
     if (kIsWeb) {
       // For web, the embed script normally renders a floating widget.
       // If developers want a page, they can push their own route. The plugin
@@ -29,25 +31,31 @@ class TawkController {
 
     _isOpen = true;
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => _TawkFullScreenPage(chatUrl: chatUrl)),
+      MaterialPageRoute<void>(
+        builder: (final _) => _TawkFullScreenPage(chatUrl: chatUrl),
+      ),
     );
     _isOpen = false;
   }
 
   /// Closes chat interface.
-  void close(BuildContext context) {
-    if (Navigator.canPop(context)) Navigator.of(context).pop();
+  void close(final BuildContext context) {
+    if (Navigator.canPop(context)) {
+      Navigator.of(context).pop();
+    }
     _isOpen = false;
   }
 
+  /// Returns true if chat interface is currently open.
   bool isOpen() => _isOpen;
 
   /// Gets controller from nearest TawkChat ancestor.
-  static TawkController of(BuildContext context) {
+  static TawkController of(final BuildContext context) {
     final state = context.findAncestorStateOfType<_TawkChatState>();
     if (state == null) {
       throw FlutterError(
-        'No TawkChat found in context. Make sure you placed a TawkChat above the calling widget.',
+        'No TawkChat found in context. Make sure you placed a TawkChat above'
+        ' the calling widget.',
       );
     }
     return state._controller;
@@ -67,20 +75,9 @@ class TawkController {
 /// )
 /// ```
 class TawkChat extends StatefulWidget {
-  /// Chat URL from Tawk.to dashboard (optional if controller is provided).
-  /// Must match controller.chatUrl if both are provided.
-  final String? chatUrl;
-
-  /// Initial height for web widget placeholder.
-  final double? initialHeight;
-
-  /// Pre-configured controller (optional if chatUrl is provided).
-  /// Must have matching chatUrl if both are provided.
-  final TawkController? controller;
-
-  /// Child widget to wrap.
-  final Widget? child;
-
+  /// Creates a TawkChat widget.
+  /// Either [chatUrl] or [controller] with matching chatUrl must be provided.
+  /// If both are provided, they must have the same chatUrl.
   TawkChat({
     super.key,
     this.chatUrl,
@@ -97,6 +94,20 @@ class TawkChat extends StatefulWidget {
               chatUrl == controller.chatUrl,
           'chatUrl must match controller.chatUrl when both are provided',
         );
+
+  /// Chat URL from Tawk.to dashboard (optional if controller is provided).
+  /// Must match controller.chatUrl if both are provided.
+  final String? chatUrl;
+
+  /// Initial height for web widget placeholder.
+  final double? initialHeight;
+
+  /// Pre-configured controller (optional if chatUrl is provided).
+  /// Must have matching chatUrl if both are provided.
+  final TawkController? controller;
+
+  /// Child widget to wrap.
+  final Widget? child;
 
   @override
   State<TawkChat> createState() => _TawkChatState();
@@ -121,7 +132,7 @@ class _TawkChatState extends State<TawkChat> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     if (!kIsWeb) {
       return widget.child ?? const SizedBox.shrink();
     }
@@ -146,9 +157,9 @@ class _TawkChatState extends State<TawkChat> {
 
 /// Full-screen page used on mobile to show the tawk embed inside a WebView.
 class _TawkFullScreenPage extends StatefulWidget {
-  final String chatUrl;
-
   const _TawkFullScreenPage({required this.chatUrl});
+
+  final String chatUrl;
 
   @override
   State<_TawkFullScreenPage> createState() => _TawkFullScreenPageState();
@@ -160,40 +171,44 @@ class _TawkFullScreenPageState extends State<_TawkFullScreenPage> {
   @override
   void initState() {
     super.initState();
-    _controller = wv.WebViewController()
-      ..setJavaScriptMode(wv.JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000));
+    _controller = wv.WebViewController();
+    unawaited(_controller.setJavaScriptMode(wv.JavaScriptMode.unrestricted));
+    unawaited(_controller.setBackgroundColor(const Color(0x00000000)));
 
     // Some embed scripts perform UA sniffing or require a non-empty user
-    // agent to run certain features. The plugin sets a conservative, modern UA string
-    // to improve compatibility with tawk's embed scripts.
+    // agent to run certain features. The plugin sets a conservative, modern
+    // UA string to improve compatibility with tawk's embed scripts.
     try {
-      _controller.setUserAgent(
-        'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) '
-        'Chrome/116.0.0.0 Mobile Safari/537.36',
+      unawaited(
+        _controller.setUserAgent(
+          'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) '
+          'Chrome/116.0.0.0 Mobile Safari/537.36',
+        ),
       );
-    } catch (_) {
+    } on Exception catch (_) {
       // setUserAgent may not be available on some platforms/versions; ignore.
     }
     // Set up navigation delegate for handling page lifecycle events
-    _controller.setNavigationDelegate(
-      wv.NavigationDelegate(
-        onProgress: (progress) {
-          /* Progress: $progress */
-        },
-        onPageStarted: (url) {
-          /* Page started: $url */
-        },
-        onPageFinished: (url) {
-          /* Page finished: $url */
-        },
-        onWebResourceError: (error) {
-          /* Resource error: ${error.description} */
-        },
+    unawaited(
+      _controller.setNavigationDelegate(
+        wv.NavigationDelegate(
+          onProgress: (final progress) {
+            /* Progress: $progress */
+          },
+          onPageStarted: (final url) {
+            /* Page started: $url */
+          },
+          onPageFinished: (final url) {
+            /* Page finished: $url */
+          },
+          onWebResourceError: (final error) {
+            /* Resource error: ${error.description} */
+          },
+        ),
       ),
     );
 
-    _loadTawkHtml();
+    unawaited(_loadTawkHtml());
   }
 
   Future<void> _loadTawkHtml() async {
@@ -201,7 +216,7 @@ class _TawkFullScreenPageState extends State<_TawkFullScreenPage> {
       final pageUrl = Uri.parse(widget.chatUrl);
       await _controller.loadRequest(pageUrl);
       return;
-    } catch (_) {
+    } on Exception catch (_) {
       try {
         final html = buildTawkEmbedHtml(widget.chatUrl);
         await _controller.loadHtmlString(html);
@@ -212,7 +227,7 @@ class _TawkFullScreenPageState extends State<_TawkFullScreenPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tawk Chat'),

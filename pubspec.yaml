@@ -3,16 +3,16 @@ description: "Modern Flutter plugin for Tawk.to live chat integration. Optimized
 version: 0.1.0
 homepage: https://github.com/csertant/tawk
 documentation: https://github.com/csertant/tawk#readme
-maintainers: 
-  - 'Tamas Csertan <tamas@binarybush.dev>'
-  - 'Mark Sarvari <mark@binarybush.dev>'
+maintainers:
+  - "Tamas Csertan <tamas@binarybush.dev>"
+  - "Mark Sarvari <mark@binarybush.dev>"
 repository: https://github.com/csertant/tawk
 issue_tracker: https://github.com/csertant/tawk/issues
 license: GPL-3.0-or-later
 
 environment:
-  sdk: '>=3.6.0 <4.0.0'
-  flutter: '>=3.27.0'
+  sdk: ">=3.6.0 <4.0.0"
+  flutter: ">=3.27.0"
 
 dependencies:
   flutter:
@@ -22,10 +22,9 @@ dependencies:
   webview_flutter: ^4.13.0
 
 dev_dependencies:
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
-
 
 flutter:
   plugin:

@@ -1,7 +1,7 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:tawk/tawk.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:tawk/src/tawk_chat_common.dart';
+import 'package:tawk/tawk.dart';
 
 void main() {
   group('TawkController', () {
@@ -11,7 +11,7 @@ void main() {
       expect(controller.chatUrl, testUrl);
     });
 
-    test('should report closed state initially', () async {
+    test('should report closed state initially', () {
       final controller = TawkController(
         chatUrl: 'https://tawk.to/chat/test/test',
       );
@@ -20,19 +20,21 @@ void main() {
   });
 
   group('TawkChat Widget', () {
-    testWidgets('should create with chatUrl', (WidgetTester tester) async {
+    testWidgets('should create with chatUrl',
+        (final WidgetTester tester) async {
       const testUrl = 'https://tawk.to/chat/test/test';
 
       await tester.pumpWidget(
         MaterialApp(
-          home: TawkChat(chatUrl: testUrl, child: Text('Test')),
+          home: TawkChat(chatUrl: testUrl, child: const Text('Test')),
         ),
       );
 
       expect(find.text('Test'), findsOneWidget);
     });
 
-    testWidgets('should create with controller', (WidgetTester tester) async {
+    testWidgets('should create with controller',
+        (final WidgetTester tester) async {
       final controller = TawkController(
         chatUrl: 'https://tawk.to/chat/test/test',
       );

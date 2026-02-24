@@ -101,7 +101,7 @@ See the Example app code above for a complete implementation.
 
 ### Alternative Usage Patterns
 
-**Direct URL (creates controller internally):**
+#### Direct URL (creates controller internally)
 ```dart
 TawkChat(
   chatUrl: 'https://tawk.to/chat/YOUR_PROPERTY_ID/YOUR_WIDGET_ID',
@@ -109,7 +109,7 @@ TawkChat(
 )
 ```
 
-**Manual controller with Stack:**
+#### Manual controller with Stack
 ```dart
 Stack(
   children: [
@@ -219,6 +219,6 @@ Contributions are welcome! Please:
 
 :zap: [Requesting features](https://github.com/BinaryBush/tawk/issues/new?assignees=&labels=new-feature&template=2_feature_request.yaml)
 
-:red_book: [License](LICENSE)
+:page_with_curl: [License](LICENSE)
 
 Every opened issue is very much appreciated!
