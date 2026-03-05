@@ -35,3 +35,25 @@ jobs:
 
       - name: Run tests
         run: flutter test --coverage
+
+      - name: Setup lcov
+        run: sudo apt-get install -y lcov
+
+      - name: Generate coverage report
+        run: genhtml coverage/lcov.info -o coverage/html
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: coverage/html
+
+      - name: Check minimum coverage
+        run: |
+          COVERAGE=$(lcov --summary coverage/lcov.info | grep lines | awk '{print $2}' | sed 's/%//')
+          echo "Coverage: $COVERAGE%"
+          MIN=100
+          if (( $(echo "$COVERAGE < $MIN" | bc -l) )); then
+            echo "Coverage $COVERAGE% is below minimum $MIN%"
+            exit 1
+          fi
